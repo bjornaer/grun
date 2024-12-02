@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 4
+    expose:
+      - 8000
+    environment:
+      - DEBUG=0
+      - DJANGO_SETTINGS_MODULE=core.settings
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - REDIS_URL=${REDIS_URL}
+      - FIELD_ENCRYPTION_KEY=${FIELD_ENCRYPTION_KEY}
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./static:/static
+      - ./media:/media
+    depends_on:
+      - web
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data: 

@@ -1,0 +1,75 @@
+{
+  "name": "carbon-credit-exchange",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@metamask/detect-provider": "^2.0.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.31",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "axios": "^1.4.0",
+    "ethers": "^5.7.2",
+    "formik": "^2.2.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.11.1",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web3": "^1.9.0",
+    "web3-core": "^1.9.0",
+    "yup": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.5",
+    "@types/web3": "^1.2.2",
+    "chai": "^4.3.7",
+    "dotenv": "^16.0.3",
+    "hardhat": "^2.14.0",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.2",
+    "ts-node": "^10.9.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "compile": "hardhat compile",
+    "test:contracts": "hardhat test",
+    "deploy:mumbai": "hardhat run scripts/deploy-polygon.ts --network mumbai",
+    "deploy:polygon": "hardhat run scripts/deploy-polygon.ts --network polygon"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+} 

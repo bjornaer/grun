@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=core.settings
+      - DB_NAME=carbon_credits
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+      - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+    depends_on:
+      - db
+      - redis
+      - clamav
+      - celery
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+      - REACT_APP_WEB3_PROVIDER=http://localhost:8545
+      - REACT_APP_CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - REACT_APP_STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
+    command: npm start
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=carbon_credits
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A core worker -l INFO
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DB_NAME=carbon_credits
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - redis
+      - db
+
+  clamav:
+    image: clamav/clamav:latest
+    ports:
+      - "3310:3310"
+    volumes:
+      - clamav_data:/var/lib/clamav
+
+volumes:
+  postgres_data:
+  redis_data:
+  clamav_data: 
